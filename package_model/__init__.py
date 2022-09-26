@@ -1,1 +1,1 @@
-from .example import quadrato 
+from .example import quadrato
