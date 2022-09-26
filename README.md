@@ -87,12 +87,138 @@ Attenzione: i due repositorio non sono la stessa cosa. Ciascuno ha il proprio ac
 
 Per caricare il pacchetto, dobbiamo prima altri file: **licence.txt**, **setup.cfg** e **README.md**.
 
-Questi tre file addizionali sono necessari per poter caricare il nostro pacchetto su PuPi.
+Questi tre file addizionali sono necessari per poter caricare il nostro pacchetto su PyPi.
 
+Il file fondamentale è **setup.cfg** e al suo interno vanno scritti i metadati che il pacchetto sta utilizzando.
 
+```
+[metadata]
+description-file = README.md
+```
 
+Adesso, scriviamo qualcosa dentro **licence.txt**. Potremmo copiare semplicemente quanto scritto nella licenza generata automaticamente da GitHub al momento della creazione del repositorio.
 
+Finalmente, siamo pronti per caricare il nostro pacchetto nel repositorio di PyPi.
 
+Dobbaimo prima creare un *single model TAR file*. Per fare ciò, utilizziamo il file **setup.py** con il comando sdist.
+La struttura ad albero che abbiamo ottenuto è la seguente:
 
+```
+package_model/
+├── build
+│   ├── bdist.linux-x86_64
+│   └── lib
+│       └── package_model
+│           ├── example.py
+│           └── __init__.py
+├── LICENSE
+├── package_model
+│   ├── example.py
+│   ├── __init__.py
+│   ├── licence.txt
+│   ├── README.md
+│   └── setup.cfg
+├── package_model.egg-info
+│   ├── dependency_links.txt
+│   ├── not-zip-safe
+│   ├── PKG-INFO
+│   ├── SOURCES.txt
+│   └── top_level.txt
+├── README.md
+└── setup.py
+```
+
+Quindi, digitiamo il seguente comando per creare il file TAR:
+
+```
+python3 setup.py sdist
+```
+
+Vediamo la nuova struttura ad albero:
+
+```
+package_model/
+├── build
+│   ├── bdist.linux-x86_64
+│   └── lib
+│       └── package_model
+│           ├── example.py
+│           └── __init__.py
+├── dist
+│   └── package_model-0.1.tar.gz
+├── LICENSE
+├── package_model
+│   ├── example.py
+│   ├── __init__.py
+│   ├── licence.txt
+│   ├── README.md
+│   └── setup.cfg
+├── package_model.egg-info
+│   ├── dependency_links.txt
+│   ├── not-zip-safe
+│   ├── PKG-INFO
+│   ├── SOURCES.txt
+│   └── top_level.txt
+├── README.md
+└── setup.py
+```
+
+Adesso apriamo la cartella **dist** e qui abbiamo tutto il necessario preparato per caricare il nostro pacchetto sul repositorio di PyPi.
 
 # 3) Pubblicazione del pacchetto
+
+ATTENZIONE: test.pypi.org è diverso dal regolere repositorio PyPi.
+
+Per prima cosa, carichiamo il pacchetto nel repositorio di test di PyPi. E una volta che siamo sicuri che il nostro test ha avuto successo, carichiamo il pacchetto sul repositorio di PyPi, in modo da condividerlo con tutti gli altri. In questo modo, ognuno potrà installare il nostro pacchetto semplicemente digitando  ```pip install [il_nostro_pacchetto```.
+
+Per fare tutto ciò, è prima necessario installare un pacchetto che ci aiuti per fare tutto ciò, ovvero **twine**:
+```pip install twine```.
+
+Una volta installato, carichiamo il nostro pacchetto su test.pypi.org digitando il comando:
+
+```
+twine upload --repository-url http://test.pypi.org/legacy/ dist/*
+```
+Ci chiederà le credenziali di login.
+
+L'output del comnado sarà:
+
+```
+Enter your username: lorenzomarini96
+Enter your password: 
+Uploading package_model-0.1.tar.gz
+100% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 17.8/17.8 kB • 00:00 • 12.7 MB/s
+
+View at:
+https://test.pypi.org/project/package-model/0.1/
+```
+
+Controlliamo se il pacchetto è stato caricato su Test.PyPi, inserendo il link generato dal comando precedente su Terminale.
+
+Inseriamo su Terminale il comando creato per installare il nostro pacchetto dal reposotorio di test:
+pip install -i https://test.pypi.org/simple/ package-model==0.1.
+
+Adesso siamo pronti per fare lo stesso sul repositorio regolare di PyPi. Prima di tutti, disinstalliamo il nostro pacchetto (in modo da poterlo ri-installare in seguito):
+
+```
+pip uninstall package_model
+```
+Carichiamo il contenuto della cartella dist per mezzo del comando seguente:
+
+```twine upload dist/*```
+
+Come prima, inseriamo le credenziali di login (di PyPi, non Test.PyPi!), ottenendo l'output seguente:
+
+```
+Uploading distributions to https://upload.pypi.org/legacy/
+Enter your username: lorenzomarini96
+Enter your password: 
+Uploading package_model-0.1.tar.gz
+100% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 17.8/17.8 kB • 00:00 • 13.8 MB/s
+
+View at:
+https://pypi.org/project/package-model/0.1/
+```
+
+Copiamo e incolliamo il link creato e andiamo a guardare il nostro pacchetto caricato su PyPi. Il nostro pacchetto è finalmente disponibile a tutto il mondo!
+Tutti possono scaricarlo e utilizzarlo semplicemente digitando ```pip install [il_nostro_pacchetto]```.
