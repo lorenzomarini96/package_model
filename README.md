@@ -1,5 +1,8 @@
 # package_model
 
+[![Documentation Status](https://readthedocs.org/projects/package-model/badge/?version=latest)](https://package-model.readthedocs.io/en/latest/?badge=latest)
+
+
 Istruzioni per creare un modulo Python e condividerlo con *pip install [package_model]*.
 
 (fonte utilizzata: https://www.youtube.com/watch?v=FkmtmYFTlYE)
